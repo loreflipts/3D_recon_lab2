@@ -7,23 +7,26 @@ for k = 1:7
     view1 = add_ones_2D(projection_AP.(name));
     view2 = add_ones_2D(projection_LAT.(name));
 
+    projection_view1.(name) = projection_AP.(name);
+    projection_view2.(name) = projection_LAT.(name);
+
     % resample
-    view1_resampled = Interpole_Discretise(view1', 2 * length(view1))';
+    %view1_resampled = Interpole_Discretise(view1', 2 * length(view1))';
     view2_resampled = Interpole_Discretise(view2', 2 * length(view2))';
 
     % epipolar lines
-    epi_view1.(name) = F_method1 * view2;
+    %epi_view1.(name) = F_method1 * view2;
     epi_view2.(name) = F_method1 * view1;
 
     % matching points for each epipolar line
     [matches_in_view2_using_view1.(name), distances_view2] = matching(epi_view2.(name), view2_resampled);
-    [matches_in_view1_using_view2.(name), distances_view1] = matching(epi_view1.(name), view1_resampled);
+    %[matches_in_view1_using_view2.(name), distances_view1] = matching(epi_view1.(name), view1_resampled);
 end
 
 %% plotting of epipolar lines
 x_range = [-10000:10000];
 name_branch = "branch1";
-plot_epi_view = epi_view1;
+plot_epi_view = epi_view2;
 plot_branch = projection_LAT.(name_branch);
 
 figure

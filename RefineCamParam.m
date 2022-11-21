@@ -320,8 +320,8 @@ elseif (nargout == 5)
     varargout = {K, d, R, t, rperr};
 end
 
-display('  ')
-display(['RefineCamParam(): Performed ' int2str(n) ' iterations.'])
+%display('  ')
+%display(['RefineCamParam(): Performed ' int2str(n) ' iterations.'])
 
 
 %% Sub Functions

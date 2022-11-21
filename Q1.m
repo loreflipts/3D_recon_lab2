@@ -51,6 +51,18 @@ F_method3 = FMatNorm8(points_AP_all, points_LAT_all);
 F_method3 = F_method3 / F_method3(3,3);
 
 
+%% Save 3D in branches
+
+scan_3D = Coronary.skeleton;
+
+for k = 1:7
+    name = "branch"+k+"";
+    branch3D = scan_3D(k);
+    branch3D = branch3D{1,1}';
+    %branch3D = [branch3D; ones(1,size(branch3D,2))];
+    branches3D.(name) = branch3D;
+end
+
 %% functions
 function [points_bifurcation1, points_bifurcation2] = choose_points_2D(image1, image2)
 

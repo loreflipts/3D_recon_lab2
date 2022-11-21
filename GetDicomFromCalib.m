@@ -55,6 +55,6 @@ if abs(alpha) == 90,
 else
     a = atan2d(R(2,1)/cosd(alpha), R(1,1)/cosd(alpha));
 end
-fprintf(1,'\nGetDicomFromCalib(): Angle around Z axis = %f deg.\n\n',a);
+%fprintf(1,'\nGetDicomFromCalib(): Angle around Z axis = %f deg.\n\n',a);
 
 
