@@ -59,8 +59,8 @@ RMSE_3D = calc_RMSE_total(branches3D_all, recon3D_matchedpoints_all);
 %% Add noise to (SID, SOD, DP, alpha, beta) 
 SID = 1050; SOD = 750; DP = 0.1953; alpha1 = 30; alpha2 = -30; beta1 = 25; beta2 = -25;
 
-num_trials = 20;
-num_levels = 20;
+num_trials = 30;
+num_levels = 100;
 RMSE_3D = [RMSE_3D zeros(4,num_levels)];
 RMSE_2D_view1 = [RMSE_2D_view1 zeros(4,num_levels)];
 RMSE_2D_view2 = [RMSE_2D_view2 zeros(4,num_levels)];
@@ -115,9 +115,11 @@ for level = 1:num_levels
         projection_noisy_view1 = backproject_2D(source_view1_noisy, recon3D_noisy_ones, 0);
         projection_noisy_view2 = backproject_2D(source_view2_noisy, recon3D_noisy_ones, 0);
     
+        [initial_view1_all, initial_view2_all] = all_points_2D(projection_view1, projection_view2);
         [noisy_view1_all, noisy_view2_all] = all_points_2D(projection_noisy_view1, projection_noisy_view2);
-        RMSE_2D_view1(:,level+1) = RMSE_2D_view1(:,level+1) + calc_RMSE_total(points_AP_all, noisy_view1_all);
-        RMSE_2D_view2(:,level+1) = RMSE_2D_view2(:,level+1) + calc_RMSE_total(points_LAT_all, noisy_view2_all);
+
+        RMSE_2D_view1(:,level+1) = RMSE_2D_view1(:,level+1) + calc_RMSE_total(initial_view1_all, noisy_view1_all);
+        RMSE_2D_view2(:,level+1) = RMSE_2D_view2(:,level+1) + calc_RMSE_total(initial_view2_all, noisy_view2_all);
     
         recon3D_noisy_all = all_points_3D(recon3D_noisy);
         RMSE_3D(:,level+1) = RMSE_3D(:,level+1) + calc_RMSE_total(branches3D_all, recon3D_noisy_all);

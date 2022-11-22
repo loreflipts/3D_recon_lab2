@@ -2,8 +2,8 @@
 %% Add noise to (SID, SOD, DP, alpha, beta) 
 SID = 1050; SOD = 750; DP = 0.1953; alpha1 = 30; alpha2 = -30; beta1 = 25; beta2 = -25;
 
-num_trials = 20;
-num_levels = 20;
+num_trials = 10;
+num_levels = 10;
 RMSE_3D_corr = [RMSE_3D(:,1) zeros(4,num_levels)];
 RMSE_2D_corr_view1 = [RMSE_2D_view1(:,1) zeros(4,num_levels)];
 RMSE_2D_corr_view2 = [RMSE_2D_view2(:,1) zeros(4,num_levels)];
@@ -14,28 +14,47 @@ for level = 1:num_levels
     trial_name = "trial"+trial+"";
         
         r = rand;
-        SID_noisy = SID*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        SID1_noisy = SID*(1 + rnum*level/100);
         
         r = rand;
-        SOD_noisy = SOD*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        SOD1_noisy = SOD*(1 + rnum*level/100);
         
         r = rand;
-        DP_noisy = DP*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        DP1_noisy = DP*(1 + rnum*level/100);
+
+        r = rand;
+        rnum = r + (sign(r-0.5)-1)/2;
+        SID2_noisy = SID*(1 + rnum*level/100);
         
         r = rand;
-        alpha1_noisy = alpha1*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        SOD2_noisy = SOD*(1 + rnum*level/100);
         
         r = rand;
-        alpha2_noisy = alpha2*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        DP2_noisy = DP*(1 + rnum*level/100);
         
         r = rand;
-        beta1_noisy = beta1*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        alpha1_noisy = alpha1*(1 + rnum*level/100);
         
         r = rand;
-        beta2_noisy = beta2*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        alpha2_noisy = alpha2*(1 + rnum*level/100);
         
-        [source_view1_noisy, ~] = BuildViewGeom(SID_noisy, SOD_noisy, DP_noisy, alpha1_noisy, beta1_noisy, [1024 1024]);
-        [source_view2_noisy, ~] = BuildViewGeom(SID_noisy, SOD_noisy, DP_noisy, alpha2_noisy, beta2_noisy, [1024 1024]);
+        r = rand;
+        rnum = r + (sign(r-0.5)-1)/2;
+        beta1_noisy = beta1*(1 + rnum*level/100);
+        
+        r = rand;
+        rnum = r + (sign(r-0.5)-1)/2;
+        beta2_noisy = beta2*(1 + rnum*level/100);
+        
+        [source_view1_noisy, ~] = BuildViewGeom(SID1_noisy, SOD1_noisy, DP1_noisy, alpha1_noisy, beta1_noisy, [1024 1024]);
+        [source_view2_noisy, ~] = BuildViewGeom(SID2_noisy, SOD2_noisy, DP2_noisy, alpha2_noisy, beta2_noisy, [1024 1024]);
 
         % define inputs for refineCamParam
         K_noisy_view1 = source_view1_noisy.K;

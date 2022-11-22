@@ -59,38 +59,58 @@ RMSE_3D = calc_RMSE_total(branches3D_all, recon3D_matchedpoints_all);
 %% Add noise to (SID, SOD, DP, alpha, beta) 
 SID = 1050; SOD = 750; DP = 0.1953; alpha1 = 30; alpha2 = -30; beta1 = 25; beta2 = -25;
 
-num_trials = 20;
-num_levels = 20;
+num_trials = 50;
+num_levels = 50;
 RMSE_3D = [RMSE_3D zeros(4,num_levels)];
 RMSE_2D_view1 = [RMSE_2D_view1 zeros(4,num_levels)];
 RMSE_2D_view2 = [RMSE_2D_view2 zeros(4,num_levels)];
 for level = 1:num_levels
+    level
     for trial = 1:num_trials
     trial_name = "trial"+trial+"";
         
         r = rand;
-        SID_noisy = SID*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        SID1_noisy = SID*(1 + rnum*level/100);
         
         r = rand;
-        SOD_noisy = SOD*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        SOD1_noisy = SOD*(1 + rnum*level/100);
         
         r = rand;
-        DP_noisy = DP*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        DP1_noisy = DP*(1 + rnum*level/100);
+
+        r = rand;
+        rnum = r + (sign(r-0.5)-1)/2;
+        SID2_noisy = SID*(1 + rnum*level/100);
         
         r = rand;
-        alpha1_noisy = alpha1*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        SOD2_noisy = SOD*(1 + rnum*level/100);
         
         r = rand;
-        alpha2_noisy = alpha2*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        DP2_noisy = DP*(1 + rnum*level/100);
         
         r = rand;
-        beta1_noisy = beta1*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        alpha1_noisy = alpha1*(1 + rnum*level/100);
         
         r = rand;
-        beta2_noisy = beta2*(1 + r*level/100);
+        rnum = r + (sign(r-0.5)-1)/2;
+        alpha2_noisy = alpha2*(1 + rnum*level/100);
         
-        [source_view1_noisy, ~] = BuildViewGeom(SID_noisy, SOD_noisy, DP_noisy, alpha1_noisy, beta1_noisy, [1024 1024]);
-        [source_view2_noisy, ~] = BuildViewGeom(SID_noisy, SOD_noisy, DP_noisy, alpha2_noisy, beta2_noisy, [1024 1024]);
+        r = rand;
+        rnum = r + (sign(r-0.5)-1)/2;
+        beta1_noisy = beta1*(1 + rnum*level/100);
+        
+        r = rand;
+        rnum = r + (sign(r-0.5)-1)/2;
+        beta2_noisy = beta2*(1 + rnum*level/100);
+        
+        [source_view1_noisy, ~] = BuildViewGeom(SID1_noisy, SOD1_noisy, DP1_noisy, alpha1_noisy, beta1_noisy, [1024 1024]);
+        [source_view2_noisy, ~] = BuildViewGeom(SID2_noisy, SOD2_noisy, DP2_noisy, alpha2_noisy, beta2_noisy, [1024 1024]);
     
     
         %% Reconstruction in 3D using noisy dicom parameters
@@ -115,7 +135,7 @@ for level = 1:num_levels
         projection_noisy_view1 = backproject_2D(source_view1_noisy, recon3D_noisy_ones, 0);
         projection_noisy_view2 = backproject_2D(source_view2_noisy, recon3D_noisy_ones, 0);
     
-        [initial_view1_all, initial_view2_all] = all_points_2D(projection_view1, projection_matched_view2);
+        [initial_view1_all, initial_view2_all] = all_points_2D(projection_view1, projection_view2);
         [noisy_view1_all, noisy_view2_all] = all_points_2D(projection_noisy_view1, projection_noisy_view2);
 
         RMSE_2D_view1(:,level+1) = RMSE_2D_view1(:,level+1) + calc_RMSE_total(initial_view1_all, noisy_view1_all);
