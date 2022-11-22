@@ -2,8 +2,8 @@
 %% Add noise to (SID, SOD, DP, alpha, beta) 
 SID = 1050; SOD = 750; DP = 0.1953; alpha1 = 30; alpha2 = -30; beta1 = 25; beta2 = -25;
 
-num_trials = 10;
-num_levels = 10;
+num_trials = 5;
+num_levels = 50;
 RMSE_3D_corr = [RMSE_3D(:,1) zeros(4,num_levels)];
 RMSE_2D_corr_view1 = [RMSE_2D_view1(:,1) zeros(4,num_levels)];
 RMSE_2D_corr_view2 = [RMSE_2D_view2(:,1) zeros(4,num_levels)];
@@ -87,7 +87,7 @@ for level = 1:num_levels
         
         %% Correction of DICOM parameters
 
-        [projection_view1_all, projection_matched_view2_all] = all_points_2D(projection_view1, projection_matched_view2);
+        [projection_view1_all, projection_matched_view2_all] = all_points_2D(projection_view1, matches_in_view2_using_view1);
         recon3D_noisy_all = all_points_3D(recon3D_newnoisy);
 
         [K_corr_view1, R_corr_view1, T_corr_view1, rperr_view1] = ...
@@ -102,17 +102,19 @@ for level = 1:num_levels
         [SID_corr_view2, SOD_corr_view2, alpha_corr_view2, beta_corr_view2] = ...
             GetDicomFromCalib(K_corr_view2, R_corr_view2, T_corr_view2, DP);
 
-        [source_view1_corr, ~] = BuildViewGeom(SID_corr_view1, SOD_corr_view1, DP, alpha_corr_view1, beta_corr_view1, [1024 1024]);
-        [source_view2_corr, ~] = BuildViewGeom(SID_corr_view2, SOD_corr_view2, DP, alpha_corr_view2, beta_corr_view2, [1024 1024]);
-        
+        %[source_view1_corr, ~] = BuildViewGeom(SID_corr_view1, SOD_corr_view1, DP, alpha_corr_view1, beta_corr_view1, [1024 1024]);
+        %[source_view2_corr, ~] = BuildViewGeom(SID_corr_view2, SOD_corr_view2, DP, alpha_corr_view2, beta_corr_view2, [1024 1024]);
+
         %% Reconstruction in 3D using corrected dicom parameters
         
-        P1_corr = source_view1_corr.P;
+        %P1_corr = source_view1_corr.P;
+        P1_corr = K_corr_view1 * [R_corr_view1 T_corr_view1];
         P1_corr = P1_corr/P1_corr(3,4);
         M1_corr = reshape(P1_corr',[12,1]);
         M1_corr = M1_corr(1:11);
         
-        P2_corr = source_view2_corr.P;
+        %P2_corr = source_view2_corr.P;
+        P2_corr = K_corr_view2 * [R_corr_view2 T_corr_view2];
         P2_corr = P2_corr/P2_corr(3,4);
         M2_corr = reshape(P2_corr',[12,1]);
         M2_corr = M2_corr(1:11);
@@ -124,8 +126,8 @@ for level = 1:num_levels
             recon3D_corr_ones.(name) = [recon3D_corr.(name); ones(1,size(recon3D_corr.(name),2))];
         end
 
-        projection_corr_view1 = backproject_2D(source_view1_corr, recon3D_corr_ones, 0);
-        projection_corr_view2 = backproject_2D(source_view2_corr, recon3D_corr_ones, 0);
+        projection_corr_view1 = newbackproject_2D(P1_corr, recon3D_corr_ones, 0);
+        projection_corr_view2 = newbackproject_2D(P2_corr, recon3D_corr_ones, 0);
     
         [corr_view1_all, corr_view2_all] = all_points_2D(projection_corr_view1, projection_corr_view2);
         RMSE_2D_corr_view1(:,level+1) = RMSE_2D_corr_view1(:,level+1) + calc_RMSE_total(points_AP_all, corr_view1_all);
