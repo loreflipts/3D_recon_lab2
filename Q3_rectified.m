@@ -6,7 +6,7 @@ for k = 1:7
     points_view1 = projection_AP_rect.(name);
     points_view2 = projection_LAT_rect.(name);
 
-    matches_view1 = matches_in_view1_using_view2_rect.(name)(1:2, :);
+    matches_view1 = view1_rect.(name)(1:2, :);
     matches_view2 = matches_in_view2_using_view1_rect.(name)(1:2, :);
 
     diff_points_view1 = points_view1 - matches_view2;
