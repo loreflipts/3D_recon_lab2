@@ -1,5 +1,5 @@
 %% resampling and calculate epipolar line and matches in view 2
-
+close all
 for k = 1:7
     name = "branch"+k+"";
 
@@ -11,20 +11,41 @@ for k = 1:7
     projection_view2.(name) = projection_LAT.(name);
 
     % resample
-    %view1_resampled = Interpole_Discretise(view1', 2 * length(view1))';
+    view1_resampled = Interpole_Discretise(view1', 2 * length(view1))'; %------
     view2_resampled = Interpole_Discretise(view2', 2 * length(view2))';
 
     % epipolar lines
-    %epi_view1.(name) = F_method1 * view2;
+    epi_view1.(name) = F_method1 * view2; %------
     epi_view2.(name) = F_method1 * view1;
 
     % matching points for each epipolar line
     [matches_in_view2_using_view1.(name), distances_view2] = matching(epi_view2.(name), view2_resampled);
-    %[matches_in_view1_using_view2.(name), distances_view1] = matching(epi_view1.(name), view1_resampled);
+    [matches_in_view1_using_view2.(name), distances_view1] = matching(epi_view1.(name), view1_resampled); %------
 end
 
-%% plotting of epipolar lines
-x_range = [-10000:10000];
+%% plotting of epipolar lines for view 1
+x_range = -10000:10000;
+name_branch = "branch1";
+plot_epi_view = epi_view1;
+plot_branch = projection_AP.(name_branch);
+
+figure
+for k = 1:5:length(plot_epi_view.(name_branch))
+    y_range = (-plot_epi_view.(name_branch)(1,k) / plot_epi_view.(name_branch)(2,k)) .* x_range ...
+        - (plot_epi_view.(name_branch)(3,k) / plot_epi_view.(name_branch)(2,k));
+    hold on
+    plot(x_range,y_range, Color='r')
+    hold on
+    plot(plot_branch(1,:), plot_branch(2,:), LineWidth=2, Color='b')
+    axis equal
+end
+title('a) Epipolar lines for branch 1 in view 1')
+xlim([-5500 1800])
+ylim([-4000 2000])
+plot(-4961,-3493.87,'b*')
+
+%% plotting of epipolar lines for view 2
+x_range = -10000:10000;
 name_branch = "branch1";
 plot_epi_view = epi_view2;
 plot_branch = projection_LAT.(name_branch);
@@ -38,9 +59,55 @@ for k = 1:5:length(plot_epi_view.(name_branch))
     hold on
     plot(plot_branch(1,:), plot_branch(2,:), LineWidth=2, Color='b')
     axis equal
-    
 end
+title('b) Epipolar lines for branch 1 in view 2')
+xlim([-5500 1800])
+ylim([-4000 2000])
+plot(-4961,-3493.87,'b*')
 
+%% plotting projection with selected epipolar lines for view 2
+% select points and store them as [X; Y; number in branch; branchnumber]
+selected_points = zeros(4,1);
+selected_points(:,1) = [projection_LAT.branch1(:,100); 100; 1];
+selected_points(:,2) = [projection_LAT.branch5(:,50); 50; 5];
+
+projection_LAT = project_2D(source_LAT, Coronary, 1);
+hold on
+
+for k = 1:size(selected_points,2)
+    % print epipolar lane with length +- 200 of points x-position
+    x_range = (selected_points(1,k)-200) : (selected_points(1,k)+200);
+    % take corresponding epipolar line for selected point
+    name_branch = "branch"+selected_points(4,k)+"";
+    point_number = selected_points(3,k);
+    y_range = (-plot_epi_view.(name_branch)(1,point_number) / plot_epi_view.(name_branch)(2,point_number)) .* x_range ...
+        - (plot_epi_view.(name_branch)(3,point_number) / plot_epi_view.(name_branch)(2,point_number));
+    % plot epipolar line
+    plot(x_range,y_range,'Color',[0 (1/size(selected_points,2))*k 1])
+    % plot corresponding point
+    plot(selected_points(1,k), selected_points(2,k),'+','Color',[0 (1/size(selected_points,2))*k 1],MarkerSize=8)
+    % plot matching point from other view
+    plot(matches_in_view2_using_view1.(name_branch)(1,point_number),...
+        matches_in_view2_using_view1.(name_branch)(2,point_number),'r+')
+end
+xlabel('u')
+ylabel('v')
+title('Projection of view 2 with selected epipolar lines')
+ax = gca;
+% zoomed section
+axes('position',[.62 .175 .25 .3])
+box on 
+hold on
+set(gca,'xtick',[],'ytick',[]);
+x_range = (selected_points(1,k)-200) : (selected_points(1,k)+200);
+y_range = (-plot_epi_view.branch1(1,100) / plot_epi_view.branch1(2,100)) .* x_range ...
+        - (plot_epi_view.branch1(3,100) / plot_epi_view.branch1(2,100));
+plot(x_range,y_range,'Color',[0 (1/size(selected_points,2))*1 1])
+plot(projection_LAT.branch1(1,:),projection_LAT.branch1(2,:),'Color','#37a820')
+plot(selected_points(1,1), selected_points(2,1),'+','Color',[0 (1/size(selected_points,2))*1 1],MarkerSize=8)
+plot(matches_in_view2_using_view1.branch1(1,100),matches_in_view2_using_view1.branch1(2,100),'r+')
+xlim([609.101, 629.101])
+ylim([278.652, 292.204])
 
 %% functions
 

@@ -25,7 +25,7 @@ for k = 1:size(branches,1)
     projections.(name) = [projection(1,:); projection(2,:)];
 
     if plotting == 1
-        plot(projection(1,:),projection(2,:))
+        plot(projection(1,:),projection(2,:),'Color','#37a820')
         axis equal
         hold on
     end

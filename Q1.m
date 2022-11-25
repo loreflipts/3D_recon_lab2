@@ -4,10 +4,10 @@ close all
 %% create projections
 
 [source_AP, ~] = BuildViewGeom(1050, 750, 0.1953, 30, 25, [1024 1024]);
-projection_AP = project_2D(source_AP,  Coronary, 0);
+projection_AP = project_2D(source_AP,  Coronary, 1);
 
 [source_LAT, ~] = BuildViewGeom(1050, 750, 0.1953, -30, -25, [1024 1024]);
-projection_LAT = project_2D(source_LAT, Coronary, 0);
+projection_LAT = project_2D(source_LAT, Coronary, 1);
 
 
 %% method 1

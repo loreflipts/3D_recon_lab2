@@ -34,7 +34,7 @@ for k = 1:7
     scatter(plot_branch(1,:), plot_branch(2,:), [], disparity_points_view1_rect.(name))
     colorbar
 end
-title('Rectified image disparity map')
+title('b) Disparity map with rectification')
 
 figure
 hold on
@@ -42,6 +42,20 @@ for k = 1:7
     name = "branch"+k+"";
     plot_branch = projection_LAT.(name);
     scatter(plot_branch(1,:), plot_branch(2,:), [], Z_points_view1_rect.(name))
+    colormap('summer')
     colorbar
 end
-title('Rectified image depth map')
+title('b) Depth map with rectification')
+
+%% Calculate disparity variance for view 1
+temp_disparity = [];
+temp_variance = [];
+for k = 1:7
+    name = "branch"+k+"";
+    temp_disparity = [temp_disparity, disparity_points_view1_rect.(name)];
+    temp_variance = [temp_variance, Z_points_view1_rect.(name)];
+end
+disparity_variance_view2_rect = std(temp_disparity)/mean(temp_disparity)
+Z_variance_view2_rect = std(temp_variance)/mean(temp_variance)
+clear temp_disparity
+clear temp_variance

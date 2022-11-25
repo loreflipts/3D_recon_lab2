@@ -14,7 +14,7 @@ source_AP_rect.P = Pn1;
 source_LAT_rect.P = Pn2;
 
 projection_AP_rect = project_2D(source_AP_rect,  Coronary, 1);
-projection_LAT_rect = project_2D(source_LAT_rect, Coronary, 0);
+projection_LAT_rect = project_2D(source_LAT_rect, Coronary, 1);
 
 %% F calculation
 [points_AP_rect_all, points_LAT_rect_all] = all_points_2D(projection_AP_rect, projection_LAT_rect);
